@@ -44,9 +44,9 @@ function App() {
         <PostTodo />
       </div>
 
-      {/* <div className="flex flex-wrap items-center gap-2 md:flex-row">
+      <div className="flex flex-wrap items-center gap-2 md:flex-row">
         <Button onClick={() => refetch()}>Refresh</Button>
-      </div> */}
+      </div>
       <div className='flex flex-wrap justify-center gap-8 mt-4'>
         {isPending && <p>Loading...</p>}
         {data && data.slice().reverse().map((todo:any) => (

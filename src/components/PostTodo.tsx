@@ -24,9 +24,9 @@ import { z } from "zod";
 const url = "http://localhost:5000/api/todos";
 
 const TodoSchema = z.object({
-  userId: z.coerce.number().min(1, { message: "User ID must be a positive number." }),
-  title: z.string().min(1, { message: "Title cannot be empty." }),
-  completed: z.boolean().default(false),
+    userId: z.number().min(1, { message: "User ID must be a positive number." }),
+    title: z.string().min(1, { message: "Title cannot be empty." }),
+    completed: z.boolean().default(false),
 });
 
 type Todo = z.infer<typeof TodoSchema>
