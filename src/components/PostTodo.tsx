@@ -24,7 +24,7 @@ import { z } from "zod";
 const url = "http://localhost:5000/api/todos";
 
 const TodoSchema = z.object({
-    userId: z.number().min(1, { message: "User ID must be a positive number." }),
+    userId: z.coerce.number().min(1, { message: "User ID must be a positive number." }),
     title: z.string().min(1, { message: "Title cannot be empty." }),
     completed: z.boolean().default(false),
 });
@@ -93,7 +93,7 @@ const PostTodo = () => {
                                     <FormItem>
                                         <FormLabel>User ID</FormLabel>
                                         <FormControl>
-                                            <Input placeholder="User ID" {...field} />
+                                            <Input type="number" placeholder="User ID" {...field} />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
