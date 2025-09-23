@@ -1,4 +1,3 @@
-import React from 'react'
 import {
     Card,
     CardHeader,
@@ -6,7 +5,6 @@ import {
     CardDescription,
     CardContent,
     CardFooter,
-    CardAction,
 } from "@/components/ui/card";
 import {motion} from "motion/react"
 
@@ -21,13 +19,6 @@ interface PostCardProps {
 const PostCard = ( todoData : PostCardProps ) => {
   return (
     <motion.div
-    // drag
-    // dragConstraints={{
-    //     left:0,
-    //     top:0,
-    //     right:100,
-    //     bottom:100
-    // }}
     whileHover={{
         scale:1.025,
         boxShadow:"0 4px 24px rgba(250,250,250,0.2)"

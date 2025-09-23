@@ -1,4 +1,3 @@
-import React from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {
     Card,
@@ -52,7 +51,7 @@ const addTodo = async (formData: Todo) => {
 const PostTodo = () => {
 
     const form = useForm<Todo>({
-        resolver: zodResolver(TodoSchema),
+        resolver: zodResolver(TodoSchema) as any,
         defaultValues: {
             userId: 0,
             title: "",
