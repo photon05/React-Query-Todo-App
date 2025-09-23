@@ -128,7 +128,7 @@ const PostTodo = () => {
                                     </FormItem>
                                 )}
                             />
-                            <Button type="submit">Submit</Button>
+                            <Button type="submit">Add Todo</Button>
                         </form>
                     </Form>
                 </CardContent>
