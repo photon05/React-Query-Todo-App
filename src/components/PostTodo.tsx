@@ -53,7 +53,7 @@ const PostTodo = () => {
     const form = useForm<Todo>({
         resolver: zodResolver(TodoSchema) as any,
         defaultValues: {
-            userId: 0,
+            userId: 1,  // Set default userId to 1 as it should be a positive number
             title: "",
             completed: false,
         },
