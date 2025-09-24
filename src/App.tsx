@@ -10,7 +10,7 @@ import { motion } from "motion/react"
 
 const url = "http://localhost:5000/api/todos"; // const url = "https://jsonplaceholder.typicode.com/todos";
 const fetchPosts = async () => {
-  // await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate network delay
+  await new Promise((resolve) => setTimeout(resolve, 5000)); // Simulate network delay
   const response = await fetch(url)
   return response.json();
 }
@@ -48,7 +48,15 @@ function App() {
         <Button onClick={() => refetch()}>Refresh</Button>
       </div>
       <div className='flex flex-wrap justify-center gap-8 mt-4'>
-        {isPending && <p>Loading...</p>}
+        {isPending && <motion.div
+        animate={{ x: [-100, 100, -100] }}
+        transition={{
+          repeat: Infinity,
+          duration: 2,
+        }}
+        className="loader bg-gray-800 dark:bg-gray-200 w-8 h-8 rounded-full shadow-[0_0_15px_4px_rgba(0,0,0,0.3)] 
+      dark:shadow-[0_0_15px_4px_rgba(255,255,255,0.2)]"
+      />}
         {data && data.slice().reverse().map((todo:any) => (
           <PostCard key={todo.id}
             userId={todo.userId}
