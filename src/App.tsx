@@ -10,7 +10,7 @@ import { motion } from "motion/react"
 
 const url = "http://localhost:5000/api/todos"; // const url = "https://jsonplaceholder.typicode.com/todos";
 const fetchPosts = async () => {
-  await new Promise((resolve) => setTimeout(resolve, 5000)); // Simulate network delay
+  // await new Promise((resolve) => setTimeout(resolve, 5000)); // Simulate network delay
   const response = await fetch(url)
   return response.json();
 }
