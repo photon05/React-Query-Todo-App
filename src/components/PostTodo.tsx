@@ -20,7 +20,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Checkbox } from "./ui/checkbox";
 import { z } from "zod";
 
-const url = "http://localhost:5000/api/todos";
+const url = "https://react-query-todo-app-ymly.vercel.app/api/todos";
 
 const TodoSchema = z.object({
     userId: z.coerce.number().min(1, { message: "User ID must be a positive number." }),
