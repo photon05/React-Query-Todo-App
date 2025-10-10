@@ -8,7 +8,7 @@ import PostTodo from './components/PostTodo';
 import { MouseFollower } from './components/MouseFollower';
 import { motion } from "motion/react"
 
-const url = "http://localhost:5000/api/todos"; // const url = "https://jsonplaceholder.typicode.com/todos";
+const url = "https://react-query-todo-app-ymly.vercel.app/api/todos"; // const url = "https://jsonplaceholder.typicode.com/todos";
 const fetchPosts = async () => {
   // await new Promise((resolve) => setTimeout(resolve, 5000)); // Simulate network delay
   const response = await fetch(url)
