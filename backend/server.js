@@ -11,6 +11,10 @@ const todos = [
   { userId: 1, id: 1, title: 'Learn JavaScript', completed: false },
 ]; 
 
+app.get('/', (req, res) => {
+  res.send("This is the todo app");
+})
+
 app.get('/api/test', (req, res) => {
   res.send('API is working');
 });
