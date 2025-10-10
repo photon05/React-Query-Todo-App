@@ -1,9 +1,9 @@
 // filepath: c:\Users\asus\React-App\react-ts-app\server.js
-import express from 'express';
+const express = require('express');
 const app = express();
 const PORT = 5000;
 
-import cors from 'cors';
+const cors = require('cors');
 app.use(cors());
 app.use(express.json());
 
