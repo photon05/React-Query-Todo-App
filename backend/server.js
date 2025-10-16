@@ -1,15 +1,28 @@
-// filepath: c:\Users\asus\React-App\react-ts-app\server.js
-const express = require('express');
-const app = express();
-const PORT = 5000;
+import express from 'express';
+import mongoose from 'mongoose';
+import Todo from './models/Todo.js';
+import dotenv from 'dotenv';
+import cors from 'cors';
 
-const cors = require('cors');
+const app = express();
+dotenv.config();
+
+const PORT = process.env.PORT;
 app.use(cors());
 app.use(express.json());
 
-const todos = [
-  { userId: 1, id: 1, title: 'Learn JavaScript', completed: false },
-]; 
+// MongoDB Connection
+
+export const connectDB = async () => {
+  try {
+    await mongoose.connect(process.env.MONGODB_URI);
+    console.log("MongoDB connected");
+  } catch (err) {
+    console.error("MongoDB connection error:", err.message);
+    process.exit(1);
+  }
+};
+connectDB();
 
 app.get('/', (req, res) => {
   res.send("This is the todo app");
@@ -19,24 +32,28 @@ app.get('/api/test', (req, res) => {
   res.send('API is working');
 });
 
-app.get('/api/todos', (req, res) => {
+app.get('/api/todos', async (req, res) => {
+  const todos = await Todo.find()
   res.json(todos);
 });
 
-app.post('/api/todos', (req, res) => {
-  const newTodo = {
-    userId: req.body.userId,
-    id: todos.length + 1,
-    title: req.body.title,
-    completed: req.body.completed,
-  };
-  // if userid is not number
-  if (typeof newTodo.userId !== 'number' || isNaN(newTodo.userId)) {
-    return res.status(400).json({ error: 'Invalid userId' });
+app.post('/api/todos', async (req, res) => {
+  try {
+    const { userId, title, completed } = req.body;
+
+    if (typeof userId !== 'number' || isNaN(userId)) {
+      return res.status(400).json({ error: 'Invalid userId' });
+    }
+
+    const newTodo = new Todo({ userId, title, completed });
+    const response = await newTodo.save();
+    res.status(201).json(response);
+  } catch (err) {
+    console.error('Error creating todo:', err.message);
+    res.status(500).json({ error: 'Server error' });
   }
-  todos.push(newTodo);
-  res.status(201).json(newTodo);
 });
+
 
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
