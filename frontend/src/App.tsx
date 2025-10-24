@@ -8,7 +8,8 @@ import PostTodo from './components/PostTodo';
 import { MouseFollower } from './components/MouseFollower';
 import { motion } from "motion/react"
 
-const url = "https://react-query-todo-app-ymly.vercel.app/api/todos";
+const url = "https://react-query-todo-app.onrender.com/api/todos";
+// const url = "https://react-query-todo-app-ymly.vercel.app/api/todos";
 // const url = "http://localhost:5000/api/todos";
 
 const fetchPosts = async () => {

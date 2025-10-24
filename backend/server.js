@@ -25,9 +25,13 @@ app.get('/api/test', (req, res) => {
   res.send('API is working');
 });
 
-app.get('/api/todos', async (req, res) => {
-  const todos = await Todo.find()
-  res.json(todos);
+app.get("/api/todos", async (req, res) => {
+  try {
+    const todos = await Todo.find();
+    res.json(todos);
+  } catch (err) {
+    console.error("Error: ", err.message);
+  }
 });
 
 app.post('/api/todos', async (req, res) => {
