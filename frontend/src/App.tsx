@@ -35,7 +35,7 @@ function App() {
       </div>
 
       <div className="flex flex-wrap items-center gap-2 md:flex-row">
-        <Button onClick={() => refetch()}>Refresh...</Button>
+        <Button onClick={() => refetch()}>Refresh</Button>
       </div>
       <div className='flex flex-wrap justify-center gap-8 mt-4'>
         {isPending && <motion.div
