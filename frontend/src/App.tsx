@@ -11,9 +11,9 @@ import { AuthProvider, useAuth } from "./lib/AuthProvider";
 import Login from "./components/Login";
 import React from "react";
 
-// const url = "https://react-query-todo-app.onrender.com/api/todos";
+const url = "https://react-query-todo-app.onrender.com/api/todos";
 // const url = "https://react-query-todo-app-ymly.vercel.app/api/todos";
-const url = "http://localhost:5000/api/todos";
+// const url = "http://localhost:5000/api/todos";
 
 const fetchPosts = async () => {
   const response = await fetch(url);

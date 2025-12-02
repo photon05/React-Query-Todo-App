@@ -1,7 +1,6 @@
 import {
     Card,
     CardHeader,
-    CardTitle,
     CardDescription,
     CardContent,
     CardFooter,
@@ -18,8 +17,12 @@ interface PostCardProps {
     refetch?: () => void;
 }
 
+const url = "https://react-query-todo-app.onrender.com/api/todos";
+// const url = "https://react-query-todo-app-ymly.vercel.app/api/todos";
+// const url = "http://localhost:5000/api/todos";
+
 const deleteTodo = async (id: number) => {
-  const response = await fetch(`http://localhost:5000/api/todos/${id}`, {
+  const response = await fetch(`${url}/${id}`, {
     method: "DELETE",
   });
   if (!response.ok) throw new Error("Failed to delete todo");
