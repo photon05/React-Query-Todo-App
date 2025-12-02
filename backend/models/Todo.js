@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 const todoSchema = new mongoose.Schema(
   {
     userId: {
-      type: Number,
+      type: String,
       required: [true, "User ID is required"],
       min: [1, "User ID must be a positive number"],
     },
@@ -19,6 +19,13 @@ const todoSchema = new mongoose.Schema(
   },
   {
     timestamps: true, // Adds createdAt and updatedAt
+    toJSON: {
+      transform(doc, ret) {
+        ret.id = ret._id;
+        delete ret._id;
+        delete ret.__v;
+      },
+    },
   }
 );
 

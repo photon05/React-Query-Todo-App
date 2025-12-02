@@ -6,17 +6,42 @@ import {
     CardContent,
     CardFooter,
 } from "@/components/ui/card";
-import {motion} from "motion/react"
-
+import {motion} from "motion/react";
+import { Button } from "@/components/ui/button";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 interface PostCardProps {
-    userId: number;
+    userId: string | number;
     id: number;
     title: string;
     completed: boolean;
+    refetch?: () => void;
 }
 
-const PostCard = ( todoData : PostCardProps ) => {
+const deleteTodo = async (id: number) => {
+  const response = await fetch(`http://localhost:5000/api/todos/${id}`, {
+    method: "DELETE",
+  });
+  if (!response.ok) throw new Error("Failed to delete todo");
+  return response.json();
+};
+
+const PostCard = ({ userId, id, title, completed, refetch }: PostCardProps) => {
+  const qc = useQueryClient();
+  const mutation = useMutation({
+    mutationFn: () => deleteTodo(id),
+    onSuccess: () => {
+      // prefer parent refetch if provided, otherwise invalidate react-query cache
+      if (refetch) refetch();
+      else qc.invalidateQueries({ queryKey: ["todos"] });
+    },
+  });
+
+  const onDelete = () => {
+    if (!confirm("Delete this todo?")) return;
+    mutation.mutate();
+  };
+
   return (
     <motion.div
     whileHover={{
@@ -27,15 +52,24 @@ const PostCard = ( todoData : PostCardProps ) => {
     >
         <Card className="w-[350px]">
             <CardHeader className='text-left'>
-                <CardTitle>Todo ID: {todoData.id}</CardTitle>
-                <CardDescription>User ID: {todoData.userId}</CardDescription>   
+                <CardDescription>User: {String(userId)}</CardDescription>   
             </CardHeader>
             <CardContent>
-                <p className="text-sm text-left">Title: {todoData.title}</p>
+                <p className="text-sm text-left">Title: {title}</p>
             </CardContent>
             <CardFooter>
-                <CardDescription className='text-left mr-auto'>Status:</CardDescription>
-                <p className="text-sm">Completed: {todoData.completed ? "Yes" : "No"}</p>
+                <CardDescription className='text-left mr-auto'>Completed: {completed ? "Yes" : "No"}</CardDescription>
+                <div className="ml-4">
+                  <Button
+                    size="sm"
+                    variant="destructive"
+                    onClick={onDelete}
+                    disabled={mutation.isPending}
+                    aria-label={`Delete todo ${id}`}
+                  >
+                    {mutation.isPending ? "Deleting..." : "Delete"}
+                  </Button>
+                </div>
             </CardFooter>
         </Card>
     </motion.div>
