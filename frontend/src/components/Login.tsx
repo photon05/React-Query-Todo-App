@@ -20,6 +20,10 @@ const LoginSchema = z.object({
 });
 type LoginValues = z.infer<typeof LoginSchema>;
 
+const baseUrl = "https://react-query-todo-app.onrender.com/api";
+// const baseUrl = "https://react-query-todo-app-ymly.vercel.app/api/todos";
+// const baseUrl = "http://localhost:5000/api";
+
 const Login: React.FC = () => {
   const { setUser } = useAuth();
   const [serverError, setServerError] = useState<string | null>(null);
@@ -34,7 +38,7 @@ const Login: React.FC = () => {
     setServerError(null);
     setSuccess(null);
     try {
-      const res = await fetch("http://localhost:5000/api/auth/login", {
+      const res = await fetch(`${baseUrl}/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(values),
@@ -103,7 +107,7 @@ const Login: React.FC = () => {
                   setServerError("provide username & password to register");
                   return;
                 }
-                fetch("http://localhost:5000/api/auth/register", {
+                fetch(`${baseUrl}/auth/register`, {
                   method: "POST",
                   headers: { "Content-Type": "application/json" },
                   body: JSON.stringify({ username: vals.username, password: vals.password }),
