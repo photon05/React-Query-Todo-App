@@ -1,142 +1,94 @@
+import React from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useForm, type Resolver } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 import {
-    Card,
-    CardHeader,
-    CardTitle,
-    CardContent,
-} from "./ui/card";
+  Form,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormControl,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from "@/components/ui/form";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Checkbox } from "./ui/checkbox";
-import { z } from "zod";
+import { useAuth } from "@/lib/AuthProvider";
+
+const TodoSchema = z.object({
+  title: z.string().min(1),
+  // userId will be set by logged-in user; we accept string | number
+  userId: z.union([z.string(), z.number()]),
+  completed: z.boolean().default(false),
+});
+type TodoValues = z.infer<typeof TodoSchema>;
 
 const url = "https://react-query-todo-app.onrender.com/api/todos";
 // const url = "https://react-query-todo-app-ymly.vercel.app/api/todos";
 // const url = "http://localhost:5000/api/todos";
 
-const TodoSchema = z.object({
-    userId: z.coerce.number().min(1, { message: "User ID must be a positive number." }),
-    title: z.string().min(1, { message: "Title cannot be empty." }),
-    completed: z.boolean().default(false),
-});
+const addTodo = async (payload: TodoValues) => {
+  const res = await fetch(url, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+  return res.json();
+};
 
-type Todo = z.infer<typeof TodoSchema>
+export default function PostTodo() {
+  const { user } = useAuth();
+  const queryClient = useQueryClient();
+  const form = useForm<TodoValues>({
+    resolver: zodResolver(TodoSchema) as Resolver<TodoValues>,
+    defaultValues: { title: "", userId: user?.username ?? "", completed: false } as TodoValues,
+  });
 
-const addTodo = async (formData: Todo) => {
-    try {
-        const response = await fetch(url, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(formData),
-        });
+  // keep userId in sync when login changes
+  React.useEffect(() => {
+    form.reset({ ...form.getValues(), userId: user?.username ?? "" });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user]);
 
-        if (response.ok) {
-            return response.json();
-        }
-    } catch (error) {
-        throw new Error("Error adding todo");
+  const mutation = useMutation({
+    mutationFn: addTodo,
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["todos"] }),
+  });
+
+  const onSubmit = (values: TodoValues) => {
+    if (!user) {
+      alert("Please login to add a todo");
+      return;
     }
-};
+    // ensure userId is the logged-in user's username (or id)
+    mutation.mutate({ ...values, userId: user.username });
+    form.reset();
+  };
 
-const PostTodo = () => {
-
-    const form = useForm<Todo>({
-        resolver: zodResolver(TodoSchema) as any,
-        defaultValues: {
-            userId: 1,  // Set default userId to 1 as it should be a positive number
-            title: "",
-            completed: false,
-        },
-    });
-
-    const queryClient = useQueryClient();
-    const mutation = useMutation({
-        mutationFn: addTodo,
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ["todos"] });
-            console.log("Todo added successfully");
-            form.reset();
-        },
-        onError: (error) => {
-            console.error("Error adding todo:", error);
-        },
-    });
-
-    const handleAddTodo = async (data: Todo) => {
-        mutation.mutate(data);
-    };
-
-    return (
-        <div>
-            <Card className="w-[350px]">
-                <CardHeader>
-                    <CardTitle>Add a new Todo</CardTitle>
-                </CardHeader>
-                <CardContent>
-                    <Form {...form}>
-                        <form onSubmit={form.handleSubmit(handleAddTodo)} className="space-y-8">
-                            <FormField
-                                control={form.control}
-                                name="userId"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>User ID</FormLabel>
-                                        <FormControl>
-                                            <Input type="number" placeholder="User ID" {...field} />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                            <FormField
-                                control={form.control}
-                                name="title"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Title</FormLabel>
-                                        <FormControl>
-                                            <Input placeholder="Title" {...field} />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                            <FormField
-                                control={form.control}
-                                name="completed"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Completed</FormLabel>
-                                        <FormControl>
-                                            {/* <Input placeholder="Completed" {...field} /> */}
-                                            <Checkbox
-                                                checked={field.value}
-                                                onCheckedChange={field.onChange}
-                                            />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                            <Button type="submit">Add Todo</Button>
-                        </form>
-                    </Form>
-                </CardContent>
-            </Card>
-        </div>
-    );
-};
-
-export default PostTodo;
+  return (
+    <div className="max-w-md mx-auto">
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <FormField
+            control={form.control}
+            name="title"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Todo Title</FormLabel>
+                <FormControl>
+                  <Input placeholder="Write a title" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <div className="flex justify-center gap-2">
+            <Button type="submit" className="w-full" disabled={!user || mutation.isPending}>
+              {mutation.isPending ? "Adding..." : "Add Todo"}
+            </Button>
+          </div>
+        </form>
+      </Form>
+    </div>
+  );
+}
